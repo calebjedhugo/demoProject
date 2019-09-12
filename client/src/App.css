@@ -1,0 +1,352 @@
+/*global stuff*/
+body {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  background-color: #6c7f8647;
+  padding: 3px;
+}
+
+input, select, button {
+  font-size: 20px;
+  background-color: seashell;
+}
+
+select {
+  width: 100%;
+  margin: 0px 3px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+input[type=button], input[type=submit], select {
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+input[type=button]:hover, select:hover {
+  background-color: #dedede;
+  transition: backgroud-color .2s;
+}
+
+input[value=Delete][type=button], input[value="Yes, Delete"][type=button] {
+  background-color: #cc44449c;
+}
+
+input[type=number]{
+  max-width: 76px;
+}
+
+.header {
+  text-align: center;
+}
+
+.smallLabel {
+  margin-left: 10px;
+  font-weight: 700;
+}
+
+.errorMessage {
+  color: red;
+}
+
+.successMessage {
+  color: green;
+}
+
+/*Authentication styles*/
+#loginDiv > form > input, #login {
+  display: block;
+  margin: 3px;
+  padding: 10px;
+}
+
+#login {
+  display: inline-block;
+}
+
+#loginDiv > form > input[type=button], #login, #loginToggle, .deleteUser {
+  margin: 10px;
+  cursor: pointer;
+}
+
+#loginDiv {
+  width: 250px;
+  margin: auto;
+}
+
+.deleteUser, #loginToggle {
+  display: inline-block;
+}
+
+#logout {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin: 5px;
+  font-size: 14px;
+}
+
+/*modals*/
+.modalbackground {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  background-color: rgb(0,0,0,0.4);
+  z-index: 2;
+}
+
+.modalBody {
+  width: 70%;
+  max-height: 50vh;
+  overflow-y: scroll;
+  overflow-x: auto;
+  margin: 75px auto;
+  background-color: white;
+  padding: 10%;
+  border: ridge darkgrey 3px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*Contains Par Calorie Changer and Meals Entry.*/
+.sidebar {
+  float: right;
+  max-width: 380px;
+  /*margin created within contents in 10px*/
+}
+
+/*Where the user changes their par calories per day.*/
+#parChanger {
+  font-size: 30px;
+  text-align: center;
+  color: seashell;
+}
+
+#parChanger:hover {
+  background-color: grey;
+  cursor: pointer;
+}
+
+#parChanger > .label {
+  font-size: 14px;
+}
+
+#parChanger > form > div {
+  padding: 10px;
+  display: block;
+  margin: 3px auto;
+}
+
+#parChanger, .mealsEntry {
+  padding: 10px;
+  background-color: darkgrey;
+  border: ridge darkred 3px;
+  margin: 5px auto;
+  transition: all .2s;
+  max-width: 525px;
+}
+
+/*Meals entry. The main div for users to enter in new meal data.*/
+.mealsEntry > h2 {
+  text-align: center;
+}
+
+.mealsEntry > table {
+  width: 100%;
+}
+
+.mealsEntry > form > input[type=text], .mealsEntry > form > input[type=number], .mealsEntry > form > div > input[type=number] {
+  padding: 3px;
+  margin: 0px 3px 6px 3px;
+}
+
+.mealsEntry > form > div {
+  display: inline-block;
+}
+
+/*Two non-date fields in the div.*/
+#enterCalories, #enterDescription {
+  min-width: 90%
+}
+
+/*Filter by Date section at the top of Meals List*/
+.filters {
+  border: ridge black 1px;
+  background-color: #fff5ee;
+  text-align: center;
+  width: 80%;
+  margin-left: 20px;
+}
+
+.filters > table {
+  border: inset darkgrey 3px;
+  margin: 2px auto;
+  width: 220px;
+}
+
+.filters > table > tbody > tr > td{
+  vertical-align: top;
+}
+
+.entryCell > div > input {
+  display: inline-block;
+}
+
+.entryCell {
+  cursor: pointer;
+}
+
+.entryCell:hover {
+  background-color: #e8e1db
+}
+
+/*I had a cool gradient this going on here, but it caused bugs. :(*/
+.underAte {
+  background-color: #0c9e0c38;
+}
+
+.overAte {
+  background-color: #ff000030;
+}
+
+.space {
+  min-width: 10px;
+}
+
+/*Where the User can view and edit their meals.*/
+.mealsList { /*contains the whole meals display.*/
+  display: inline-block;
+  background-color: white;
+  border: 3px ridge darkred;
+  -webkit-overflow-scrolling: touch;
+  min-height: 400px;
+}
+
+.mealsTable { /*actually a div*/
+  max-height: 400px;
+  overflow: scroll;
+  font-size: 14px;
+}
+
+.mealsTable > table, .userListTable > table {
+  width: 100%;
+}
+
+.mealsTable > table > tbody > tr > td, .userListTable > table > tbody > tr > td{
+  padding: 10px;
+}
+
+.mealsTable > table > tbody > tr:nth-child(odd){
+  opacity: .85
+}
+
+/*User list. The div where managers and admins view and edit users.*/
+.userList, .mealsList { /*The styles of these two tables should be very similar.*/
+  border: 3px ridge darkred;
+  margin: 20px auto;
+  padding: 5px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: white;
+}
+
+.userList > h2 {
+  text-align: center;
+}
+
+.userListHeader {
+  white-space: nowrap;
+  margin: 3px;
+}
+
+.userList {
+  max-width: 90%;
+  display: block;
+}
+
+.userListTable { /*which is actually a div.*/
+  max-height: 200px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+.userListTable > table > tbody > tr:nth-child(odd){
+  background-color: #d3d3d33d;
+}
+
+/*The button in the upper-left for admins and managers to creat new users.*/
+#createNewUser {
+  font-size: 10px;
+}
+
+/*Makes it easy to see yourself on the list, or what data you're editing if you're an admin.*/
+.currentUserEntry {
+  background-color: #90ee9073 !important;;
+}
+
+/*Handles both search bars (User List and Meals List)*/
+.search-container {
+  display: inline-block;
+  margin: 2px;
+  max-width: 35%;
+}
+
+.search-container > form > input {
+  max-width: 80%;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.search-container > form > button {
+  font-size: 14px;
+  padding: 4px;
+  margin: 0px 2px;
+}
+
+/*Mobile exceptions.*/
+@media screen and (max-width: 970px){
+  .sidebar { /*margin created within contents in 10px*/
+    float: none;
+    display: block;
+    width: 380px;
+    margin: auto;
+  }
+
+  .mealsList {
+    max-width: 100%;
+    width: 550px;/*I had a reason for this but can't remember what is was. Betting leave it for now.*/
+    margin: auto;
+    display: block;
+  }
+
+  .mealsTable {
+    max-height: 90vh;
+  }
+
+  .modalBody {
+    padding: 10px;
+    width: 90%;
+    margin: 15px auto;
+  }
+}
+
+/*Loader styling.*/
+.loader {
+  border: 3px solid #f3f3f3; /* Light grey */
+  border-top: 3px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  animation: spin .4s linear infinite;
+  display: inline-block;;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

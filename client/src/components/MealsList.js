@@ -36,9 +36,9 @@ export class MealsList extends Component {
 
   updateList(){
     this.setState({loading: true})
-    axios({url: `meals/getMeals`,
-      method: 'POST',
-      data: { //We don't limit the query by time since we need that data to count each day's calories.
+    axios({url: `meals`,
+      method: 'GET',
+      params: { //We don't limit the query by time since we need that data to count each day's calories.
         fromDate: this.state.fromDate,
         toDate: this.state.toDate,
         _id: this.props.selectedId
@@ -318,8 +318,8 @@ class Entry extends Component {
     this.props.setLoading(true)
     this.setState({loading: true})
     axios({
-      url: `meals/deleteMeal`,
-      method: 'POST',
+      url: `meals`,
+      method: 'DELETE',
       data: {
           _id: this.props._id,
           userId: this.props.selectedId //We compare this with the jwt and the user's role to make sure they're allowed to edit this entry.

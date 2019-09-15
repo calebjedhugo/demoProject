@@ -4,18 +4,18 @@ const User = require('../model/User'); //for validating the user's role.
 
 const {mealValidation, getMealsValidation, skipMaxSearchValidation} = require('../validation')
 
-router.post('/getMeals', async (req, res) => {
+router.route('/').get(async (req, res) => {
   const requesterRole = (await User.findOne({_id: req.user._id})).role
-  if(requesterRole !== 'admin' && req.user._id !== req.body._id){
+  if(requesterRole !== 'admin' && req.user._id !== req.query._id){
     return res.status(401).json('Insufficient Role') //Only admins should be viewing meals that aren't theirs.
   }
 
-  const {error} = getMealsValidation(req.body)
+  const {error} = getMealsValidation(req.query)
   if(error) return res.status(400).json(error.details[0].message);
 
   const query = {
-    userId: req.body._id, //indexed
-    date: {'$gte': new Date(req.body.fromDate), '$lte': new Date(req.body.toDate)} //indexed
+    userId: req.query._id, //indexed
+    date: {'$gte': new Date(req.query.fromDate), '$lte': new Date(req.query.toDate)} //indexed
   }
 
   try{
@@ -24,9 +24,7 @@ router.post('/getMeals', async (req, res) => {
     return res.status(400).json(e.message)
   }
   res.json(mealData);
-})
-
-router.post('/addMeal', async (req, res) => {
+}).post(async (req, res) => {
   const requesterRole = (await User.findOne({_id: req.user._id})).role
   if(requesterRole !== 'admin' && req.user._id !== req.body.userId){
     res.status(401).json('Insufficient Role') //Only admins should be able to add meals to other accounts.
@@ -43,9 +41,7 @@ router.post('/addMeal', async (req, res) => {
   } catch (e) {
     res.status(400).json(e.message);
   }
-})
-
-router.post('/editMeal', async (req, res) => {
+}).patch(async (req, res) => {
   const { error } = mealValidation(req.body);
   const requesterRole = (await User.findOne({_id: req.user._id})).role
   if(error) return res.status(400).json(error.details[0].message);
@@ -60,9 +56,7 @@ router.post('/editMeal', async (req, res) => {
   } catch (e) {
     res.status(400).json(e.message);
   }
-})
-
-router.post('/deleteMeal', async (req,res) => {
+}).delete(async (req,res) => {
   var query = {_id: req.body._id}
   const requesterRole = (await User.findOne({_id: req.user._id})).role
   //Only admins can delete a single record that's not theirs.
@@ -78,4 +72,4 @@ router.post('/deleteMeal', async (req,res) => {
   }
 })
 
-module.exports = router
+module.exports = router;

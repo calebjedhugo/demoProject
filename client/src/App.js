@@ -27,7 +27,7 @@ axios.interceptors.response.use(undefined, e => { //Let the user know if the jwt
       let logout = document.getElementById('logout')
       if(logout) logout.click()
     }, 3000); //3s to be polite. Wrapped in the if just in case they already clicked it.
-    e.response.data = 'Session expired'
+    e.response.data = 'Login Required'
   }
   return Promise.reject(e);
 });
@@ -44,6 +44,7 @@ class App extends Component {
       modalContents: null,
       loading: false
     }
+    this.alreadyAttempted = 0 //In case the server does not respond, we can try a few more times.
   }
 
   get defaultState(){
@@ -61,59 +62,47 @@ class App extends Component {
     this.getUserData(); //init interface from database if a jwt is there.
   }
 
-  /*Most of this nonsense was to make the developement process smoother. It won't hurt prod, so there's no reason to remove it.*/
-  getUserData(alreadyAttempted, jwtNew){
-    this.setState({loading: true})
-    if(alreadyAttempted >= 5) return this.setState({error: 'We are experiencing technical difficulties. Please try again later.'})
-    axios({
-      url: `users/getUserData`,
-      method: 'GET'
-    }).then(async res => {
-      var data = res.data;
-      this.setState({error: ''}) //Clear this out in case there was a moment on the server.
-      if(res.statusText === 'OK'){
-        this.setState({selectedId: data._id, myId: data._id, myRole: data.role, ...data}); //Put whole response in the state (includes name and role).
-        if(!jwtNew) {
-          axios({
-            url: `jwt/freshToken`,
-            method: 'GET',
-          }).then(res => {
-            axios.defaults.headers.common['Authorization'] = res.data;
-            storeJwt(res.data);
-          })
-        }
-      }
-    }).catch(e => {
-      if(e.response){ //An error with a response means a login is required.
-        axios.defaults.headers.common['Authorization'] = '';
-        storeJwt('');
-      } else { //No response means the server is down. Try request again.
-        this.setState({error: 'Loading...'})
-      }
-      //This timeout is mostly because in the dev enviroment the client kept loading before the server.
-      //But it is fine to be in production too since if this happened, the message above would be accurate.
-      setTimeout( () => {this.getUserData(alreadyAttempted ? alreadyAttempted + 1 : 1)}, 1000)
-    }).finally(() => this.setState({loading: false}))
-  }
-
   //Sets complete user data (calories and name) at the app level when an admin clicks a "Edit Meals Data" button in the user edit modal.
   //MealsList refreshes if the selectedId changes, so that will be all set too.
-  getDifferentUserData(_id){
+  getUserData(_id, jwtNew){
     this.setState({loading: true})
+    if(this.alreadyAttempted >= 5) return this.setState({error: 'We are experiencing technical difficulties. Please try again later.'})
     axios({
-      url:`users/getOtherUserData`,
-      method: 'POST',
-      data: {_id: _id}
+      url:`users`,
+      method: 'GET',
+      params: {_id: _id || undefined}
     }).then(async res => {
       var data = res.data;
+      var myId = this.state.myId || data._id
       this.setState({selectedId: data._id,
+        myId: myId, //Will set to active user on init.
         error: '',
         //If a user demotes themselves, their display will update accordingly.
-        myRole: data._id === this.state.myId ? data.role : this.state.myRole,
+        myRole: data._id === myId ? data.role : this.state.myRole,
         ...data
       });
+      if(!jwtNew) {
+        axios({
+          url: `jwt/freshToken`,
+          method: 'GET',
+        }).then(res => {
+          axios.defaults.headers.common['Authorization'] = res.data;
+          storeJwt(res.data);
+        })
+      }
     }).catch(e => {
-      this.setState({error: e.response ? e.response.data : e.message})
+      if(e.response){
+        console.log(e.response.data)
+        if(e.response.data === 'Login Required'){ //An error with a response means a login is required.
+          axios.defaults.headers.common['Authorization'] = '';
+          storeJwt('');
+          this.setState({error: ''})
+        }
+      } else if(!e.response){ //No response means the server is down. Try request again.
+          this.setState({error: 'Loading...'})
+          this.alreadyAttempted += 1;
+          setTimeout(() => {this.getUserData(_id)}, 1000)  //Try again in case the server was just having a moment (mostly for the developer environment).
+        }
     }).finally(() => this.setState({loading: false}))
   }
 
@@ -141,7 +130,7 @@ class App extends Component {
             myRole={this.state.myRole}
             myId={this.state.myId}
             selectedId={this.state.selectedId}
-            getDifferentUserData={_id => this.getDifferentUserData(_id)}/> : null}
+            getUserData={_id => this.getUserData(_id)}/> : null}
           <CalorieTracker
             setModalContents={contents => this.setState({modalContents: contents})}
             role={this.state.role}

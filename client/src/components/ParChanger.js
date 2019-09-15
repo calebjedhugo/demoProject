@@ -24,8 +24,8 @@ export class ParChanger extends Component {
   changePar(){
     this.setState({loading: true})
     axios({
-      url: `users/updateParCalories`,
-      method: 'POST',
+      url: `users`,
+      method: 'PATCH',
       data: {
         parCalories: this.state.pendingParCalories,
         _id: this.props.selectedId

@@ -97,7 +97,7 @@ export class Login extends Component {
                   `Edit${this.props.me ? ' Your' : ''} Meals Data`
                 } onClick={
                   () => {
-                    this.props.getDifferentUserData();
+                    this.props.getUserData();
                     this.props.closeModal();
                   }}></input> : null}
           </div>

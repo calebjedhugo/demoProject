@@ -6,7 +6,7 @@ import axios from 'axios';
 export class UserList extends Component {
   constructor(props){
     super(props);
-    this.getAllUserData = this.getAllUserData.bind(this);
+    this.getUserList = this.getUserList.bind(this);
     this.state = {
       error: '',
       data: [],
@@ -34,21 +34,21 @@ export class UserList extends Component {
   }
 
   componentDidMount(){
-    this.getAllUserData(); //init list.
+    this.getUserList(); //init list.
   }
 
   componentDidUpdate(prevProps, prevState){
     if(prevState.skip !== this.state.skip ||
       prevState.max !== this.state.max ||
       prevState.search !== this.state.search){
-        this.getAllUserData()
+        this.getUserList()
     }
   }
 
-  getAllUserData(){
+  getUserList(){
     this.setState({loading: true})
     axios({
-      url: `users/getAllUserData`,
+      url: `users/getUserList`,
       method: 'GET',
       params: {
         search: this.state.search,
@@ -65,12 +65,12 @@ export class UserList extends Component {
 
   deleteUser(_id, callback){
     this.setState({loading: true})
-    axios({url: `users/deleteUser`,
-      method: 'POST',
+    axios({url: `users`,
+      method: 'DELETE',
       data: {_id: _id}
     }).then(res => {
       this.setState({error: '', success: `Deleted ${res.data.name}, ${res.data.email}.`});
-      this.getAllUserData()
+      this.getUserList()
     }).catch(e => {
       this.setState({error: e.response ? e.response.data : e.message})
     }).finally(() => {
@@ -87,10 +87,10 @@ export class UserList extends Component {
         deleteUser={callback => this.deleteUser(elem._id, callback)}
         setModalContents={this.props.setModalContents}
         roleOptions={this.roleOptions}
-        getDifferentUserData={() => {
-          this.props.getDifferentUserData(elem._id)
+        getUserData={() => {
+          this.props.getUserData(elem._id)
         }}
-        getAllUserData={this.getAllUserData}
+        getUserList={this.getUserList}
         key={elem._id}
         thisIsMe={isThisMe}
         displayed={elem._id === this.props.selectedId}
@@ -100,7 +100,7 @@ export class UserList extends Component {
           allData[i] = newData;
           this.setState({data: allData});
           //And refresh the displayed data if the user is selected.
-          if(elem._id === this.props.selectedId) this.props.getDifferentUserData(this.props.selectedId);
+          if(elem._id === this.props.selectedId) this.props.getUserData(this.props.selectedId);
         }}
         {...elem} />)
     })
@@ -111,7 +111,7 @@ export class UserList extends Component {
           <NewUser
             loading={this.state.loading}
             setModalContents={this.props.setModalContents}
-            getAllUserData={this.getAllUserData}
+            getUserList={this.getUserList}
             myId={this.props.myId}
             roleOptions={this.roleOptions} />
           <Search
@@ -165,7 +165,7 @@ class NewUser extends Component{
         onClick={() => {this.props.setModalContents(
           <Login
             loading={this.props.loading}
-            getUserData={this.props.getAllUserData}
+            getUserData={this.props.getUserList}
             roleOptions={this.props.roleOptions}
             closeModal={() => this.props.setModalContents(null)} />
         )}}></input>
@@ -188,8 +188,8 @@ class UserEntry extends Component{
   updateUser(changeQuery, callback){
     this.setState({loading: true})
     axios({
-      url: `users/editUser`,
-      method: 'POST',
+      url: `users`,
+      method: 'PATCH',
       data: {_id: this.props._id, ...changeQuery}
     }).then(res => {
       this.props.updateData(res.data);
@@ -212,7 +212,6 @@ class UserEntry extends Component{
             } else {
             this.props.setModalContents(
               <Login
-                getUserData={this.props.getAllUserData}
                 me={me}
                 myRole={this.props.myRole}
                 updateUser={this.updateUser}
@@ -220,7 +219,7 @@ class UserEntry extends Component{
                 adminManagerEntry={true}
                 deleteUser={this.props.deleteUser}
                 roleOptions={this.props.roleOptions}
-                getDifferentUserData={this.props.getDifferentUserData}
+                getUserData={this.props.getUserData}
                 displayed={this.props.displayed}
                 closeModal={() => this.props.setModalContents(null)}
                 name={this.props.name}

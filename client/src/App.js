@@ -66,7 +66,7 @@ class App extends Component {
     this.setState({loading: true})
     if(alreadyAttempted >= 5) return this.setState({error: 'We are experiencing technical difficulties. Please try again later.'})
     axios({
-      url: `data/getUserData`,
+      url: `users/getUserData`,
       method: 'GET'
     }).then(async res => {
       var data = res.data;
@@ -101,7 +101,7 @@ class App extends Component {
   getDifferentUserData(_id){
     this.setState({loading: true})
     axios({
-      url:`data/getOtherUserData`,
+      url:`users/getOtherUserData`,
       method: 'POST',
       data: {_id: _id}
     }).then(async res => {

@@ -36,7 +36,7 @@ export class MealsList extends Component {
 
   updateList(){
     this.setState({loading: true})
-    axios({url: `data/getMeals`,
+    axios({url: `meals/getMeals`,
       method: 'POST',
       data: { //We don't limit the query by time since we need that data to count each day's calories.
         fromDate: this.state.fromDate,
@@ -318,7 +318,7 @@ class Entry extends Component {
     this.props.setLoading(true)
     this.setState({loading: true})
     axios({
-      url: `data/deleteMeal`,
+      url: `meals/deleteMeal`,
       method: 'POST',
       data: {
           _id: this.props._id,

@@ -58,8 +58,8 @@ export class Login extends Component {
     this.setState({loading: true})
     axios({
       url: `auth/login`,
-      method: 'POST',
-      data: {
+      method: 'GET',
+      params: {
         email: this.state.email,
         password: this.state.password
       }

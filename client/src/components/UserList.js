@@ -48,7 +48,7 @@ export class UserList extends Component {
   getAllUserData(){
     this.setState({loading: true})
     axios({
-      url: `data/getAllUserData`,
+      url: `users/getAllUserData`,
       method: 'GET',
       params: {
         search: this.state.search,
@@ -65,7 +65,7 @@ export class UserList extends Component {
 
   deleteUser(_id, callback){
     this.setState({loading: true})
-    axios({url: `data/deleteUser`,
+    axios({url: `users/deleteUser`,
       method: 'POST',
       data: {_id: _id}
     }).then(res => {
@@ -188,7 +188,7 @@ class UserEntry extends Component{
   updateUser(changeQuery, callback){
     this.setState({loading: true})
     axios({
-      url: `data/editUser`,
+      url: `users/editUser`,
       method: 'POST',
       data: {_id: this.props._id, ...changeQuery}
     }).then(res => {

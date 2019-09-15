@@ -13,7 +13,7 @@ filtering meals by date,
 changing number of entries displayed at a time,
 and a user search for admins and managers with the same ability to limit and expand the results.
 
-To install, type "npm run installDev" into a terminal to get the node_modules for both client and server-side code. Then create a file called ".env" in the root with the following contents:
+To install, type "npm run install" into a terminal. Then type "cd client && npm install" to get the node_modules for both client and server-side code. Then create a file called ".env" in the root with the following contents:
 
 username=yourUsername
 password=yourPassword
@@ -23,6 +23,6 @@ TOKEN_SECRET=someRandomChars
 
 You will need to set up your own Mongo DB cluster.
 
-After this is complete, type "npm run dev" to start both the node server to run the server-side code, and the react server.
+After this is complete, go back to the root folder type "npm run dev" to start both the node server to run the server-side code, and the react server.
 
 Please contact me at calebjedhugo@gmail.com with any questions or opportunities.

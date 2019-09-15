@@ -12,7 +12,6 @@ module.exports = function (req, res, next){
     return res.json('Login Required')
   }
   try {
-    //console.log(token)
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
     req.user = verified;
     if(req.user) next();

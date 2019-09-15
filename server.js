@@ -43,7 +43,8 @@ app.use(jwtVerify, verifyJwt)
 
 //Import Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/data', require('./routes/data'));
+app.use('/api/meals', require('./routes/meals'));
+app.use('/api/users', require('./routes/users'));
 app.use('/api/jwt', require('./routes/jwt'));
 
 //sererside is 3001 until there is a reason for it to be something else.

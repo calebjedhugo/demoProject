@@ -48,7 +48,7 @@ export class MealsEntry extends Component {
     }
     this.setState({loading: true})
     axios({
-      url: `data/${this.props.editing ? 'editMeal' : 'addMeal'}`,
+      url: `meals/${this.props.editing ? 'editMeal' : 'addMeal'}`,
       method: 'POST',
       data: {
         description: this.state.description,

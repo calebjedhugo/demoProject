@@ -45,15 +45,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
-  const { error } = loginValidation(req.body);
+router.get('/login', async (req, res) => {
+  const { error } = loginValidation(req.query);
   if(error) return res.status(400).json(error.details[0].message);
 
   //Is the user already in the database?
-  const user = await User.findOne({email: req.body.email}) //indexed
-  if(!user) return res.status(400).json(`${req.body.email} is not associated with an account. But you can create one!`)
+  const user = await User.findOne({email: req.query.email}) //indexed
+  if(!user) return res.status(400).json(`${req.query.email} is not associated with an account. But you can create one!`)
 
-  const validPass = await bcrypt.compare(req.body.password, user.password)
+  const validPass = await bcrypt.compare(req.query.password, user.password)
   if(!validPass) return res.status(400).json('Password was incorrect.')
 
   const token = jwt.sign({_id: user._id, role: user.role}, process.env.TOKEN_SECRET, { expiresIn: '1h' })

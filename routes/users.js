@@ -2,7 +2,8 @@ const router = require('express').Router();
 const User = require('../model/User');
 const Meal = require('../model/Meal'); //for clearing out deleted user's meals.
 
-const {userChangeValidation, skipMaxSearchValidation} = require('../validation')
+const {userChangeValidation} = require('../validation/users')
+const {skipMaxSearchValidation}  = require('../validation/search')
 
 //This is called to get a user's complete data when an admin clicks on a "Edit Meals Data" button.
 router.route('/').get(async (req, res) => {

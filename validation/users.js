@@ -31,38 +31,6 @@ const loginValidation = data => {
   return Joi.validate(data, schema)
 }
 
-const mealValidation = data => {
-  const schema = {
-    _id: Joi.string(),
-    userId: Joi.string(),
-    description: Joi.string(),
-    calories: Joi.number().integer().min(0),
-    date: Joi.date(), //having date and time seperate will make filtering easier.
-    time: Joi.number().min(0).max(1439) //minutes in a day. Then we can filter using intergers.
-  }
-  return Joi.validate(data, schema)
-}
-
-const getMealsValidation = data => {
-  const schema = {
-    _id: Joi.string().required(),
-    fromDate: Joi.date().required(),
-    toDate: Joi.date().required()
-  }
-  return Joi.validate(data, schema)
-}
-
-const skipMaxSearchValidation = data => {
-  const schema = {
-    skip: Joi.number().min(0).required(),
-    max: Joi.number().min(1).max(100).required(),
-    search: Joi.string().required()
-  }
-}
-
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
-module.exports.mealValidation = mealValidation;
 module.exports.userChangeValidation = userChangeValidation;
-module.exports.getMealsValidation = getMealsValidation;
-module.exports.skipMaxSearchValidation = skipMaxSearchValidation;

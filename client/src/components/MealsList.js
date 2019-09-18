@@ -41,7 +41,7 @@ export class MealsList extends Component {
       params: { //We don't limit the query by time since we need that data to count each day's calories.
         fromDate: this.state.fromDate,
         toDate: this.state.toDate,
-        _id: this.props.selectedId
+        userId: this.props.selectedId
       }
     }).then(res => {
       var data = res.data;
@@ -95,6 +95,7 @@ export class MealsList extends Component {
           setToTime={value => {this.setState({toTime: value})}} //setting this will trigger entryRows to refresh.
           toTime={this.state.toTime}
           updateList={this.updateList} />
+        {this.state.error ? <div className='errorMessage'>{this.state.error}</div> : null}
         {this.entryRows.length ?
         <div className={'mealsTable'}>
           <div className='userListHeader'><Search
@@ -110,7 +111,6 @@ export class MealsList extends Component {
                 max: Number(newMax)})
               }
             }/></div>
-          {this.state.error ? <div className='errorMessage'>{this.state.error}</div> : null}
           <table>
             <thead>
               <tr>

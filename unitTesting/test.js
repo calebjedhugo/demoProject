@@ -9,7 +9,7 @@ var component, rightPassword, wrongPassword, driver, role
   rightPassword = 'Testing'
   wrongPassword = 'testing'
   try {
-    await driver.get('http://localhost:3000');
+    await driver.get('http://localhost:3001');
 
     await loginScreens()
 

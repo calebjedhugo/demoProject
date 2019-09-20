@@ -1,11 +1,12 @@
+const router = require('express').Router();
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
 
-module.exports = function (req, res, next){
+const verifyJwt = (req, res, next) => {
   const token = req.header('Authorization');
   if(!token || token === 'null'){ //No token means they are requesting the client code.
     let safeUrl = req.originalUrl.replace(/\.\.\//g, '') //Let not leave this just to node.
-    let path = `${__dirname.replace('/routes', '')}/publichtml${safeUrl}`
+    let path = `${__dirname.replace('/middleware', '')}/publichtml${safeUrl}`
     if(fs.existsSync(path)){ //If we have it in that folder, it should be accessable.
       return res.sendFile(path)
     }
@@ -20,3 +21,11 @@ module.exports = function (req, res, next){
     res.status(403).json('Login Required');
   }
 }
+
+//We need these open for the user to get the jwt in the first place so they should be excluded.
+const jwtVerify = /^(?!\/api\/auth).*/
+
+//Authenticate token for all other requests.
+router.use(jwtVerify, verifyJwt)
+
+module.exports = router

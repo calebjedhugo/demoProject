@@ -29,7 +29,7 @@ router.route('/').all(async (req, res, next) => {
 
   next()
 }).get(async (req, res) => {
-
+  
   const query = {
     userId: req.query.userId, //indexed
     date: {'$gte': new Date(req.query.fromDate), '$lte': new Date(req.query.toDate)} //indexed

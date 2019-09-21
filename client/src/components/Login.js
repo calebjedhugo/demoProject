@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Loader} from './Loader.js'
 import axios from 'axios';
-import {storeJwt} from '../storage.js';
 
 //Also handles adding and editing users from admin and manager roles.
 export class Login extends Component {
@@ -64,11 +63,7 @@ export class Login extends Component {
         password: this.state.password
       }
     }).then(res => {
-      if(res.data.message === 'Login was successful!'){
-        axios.defaults.headers.common['Authorization'] = res.data.jwt;
-        storeJwt(res.data.jwt);
-        this.props.getUserData(false, true);
-      }
+      this.props.getUserData(false);
     }).catch((e) => {
       this.setState({error: e.response ? e.response.data : e.message})
     }).finally(() => {this.setState({loading: false})})

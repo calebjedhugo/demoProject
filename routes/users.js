@@ -5,33 +5,28 @@ const Meal = require('../model/Meal'); //for clearing out deleted user's meals.
 const {userChangeValidation} = require('../validation/users')
 const {skipMaxSearchValidation}  = require('../validation/search')
 
-//This is called to get a user's complete data when an admin clicks on a "Edit Meals Data" button.
-router.route('/').get(async (req, res) => {
-  var userId
-  if(req.query._id){
-    const requesterRole = (await User.findOne({_id: req.user._id})).role
-    if(!/^admin$/.test(requesterRole) && req.user._id !== req.body._id){
-      return res.status(401).json('Insufficient Role')
-    } else {
-      userId = req.query._id //Admins can have other's data.
-    }
-  } else {
-    userId = req.user._id //just return the active user's data.
+router.route('/').all(async (req, res, next) => {
+  if(req.method === 'GET') req.body = req.query;
+
+  //If the user is editing themselves
+  if(!req.body._id || req.body._id === req.user._id){
+    req.body._id = req.user._id
+    return next();
   }
 
+  if(!/^(admin|manager)$/.test(req.user.role)){
+    return res.status(401).json('Insufficient Role')
+  }
+  next();
+}).get(async (req, res) => {
   try{
-    var userData = await User.findOne({_id: userId}).select({password: 0, __v: 0})
+    var userData = await User.findOne({_id: req.body._id}).select({password: 0, __v: 0})
     res.json(userData)
   } catch(e){
     res.status(500).json(e.message)
   }
 }).patch(async (req, res) => {
-  const requesterRole = (await User.findOne({_id: req.user._id})).role
-  if(!/^(admin|manager)$/.test(requesterRole) && req.user._id !== req.body._id){
-    return res.status(401).json('Insufficient Role')
-  }
-
-  if(requesterRole !== 'admin' && req.body.role === 'admin'){
+  if(req.user.role !== 'admin' && req.body.role === 'admin'){
     return res.status(401).json('Insufficient Role')
   }
 
@@ -40,30 +35,30 @@ router.route('/').get(async (req, res) => {
     const emailExist = await User.findOne({email: req.body.email}) //indexed
     if(emailExist && emailExist._id.toString() !== req.body._id) return res.status(400).json(`${req.body.email} is already associated with an account.`)
 
-    const currentTargetRole = (await User.findOne({_id: req.body._id})).role
-    if(currentTargetRole === 'admin' && requesterRole !== 'admin'){
-      return res.status(401).json('Managers cannot edit admins.')
-    }
-
-    const adminCount = await User.countDocuments({role: 'admin'}) //indexed
-    if(currentTargetRole === 'admin' && adminCount === 1 && req.body.role){
-      return res.status(401).json('There must be at least one admin');
+    if(req.user.role !== 'admin'){
+      const currentTargetRole = (await User.findOne({_id: req.body._id})).role
+      if(currentTargetRole === 'admin'){
+        return res.status(401).json('Managers cannot edit admins.')
+      }
+    } else if(req.body.role !== 'admin' && req.body._id === req.user._id) {//is an admin demoting themself
+      const adminCount = await User.countDocuments({role: 'admin'}) //indexed
+      if(adminCount === 1){
+        return res.status(401).json('There must be at least one admin');
+      }
     }
 
     const { error } = userChangeValidation(req.body);
     if(error) return res.status(400).json(error.details[0].message);
 
     var data = await User.findOneAndUpdate({_id: req.body._id}, req.body, {new: true}).select({password: 0, __v: 0})
+    if(req.body._id === req.user._id && req.body.role !== req.user.role){
+      res.set('Authorization', await require('../util/freshJwt')(req.user._id))
+    }
     res.json(data);
   } catch (e) {
-    res.status(400).json(e.message);
+    res.status(400).json(e.message || e);
   }
 }).delete(async (req, res) => {
-  const requesterRole = (await User.findOne({_id: req.user._id})).role
-  if(!/^(admin|manager)$/.test(requesterRole)){
-    return res.status(401).json('Insufficient Role')
-  }
-
   if(req.body._id === req.user._id){
     return res.status(400).json('You cannot delete yourself');
   }
@@ -72,7 +67,7 @@ router.route('/').get(async (req, res) => {
   var proposedDelete
   try{
     proposedDelete = await User.findOne({_id: req.body._id})
-    if(proposedDelete.role === 'admin' && requesterRole !== 'admin'){
+    if(proposedDelete.role === 'admin' && req.user.role !== 'admin'){
       return res.status(401).json('Insufficient role.')
     }
   } catch(e){
@@ -89,8 +84,7 @@ router.route('/').get(async (req, res) => {
 })
 
 router.get('/getUserList', async (req, res) => {
-  const requesterRole = (await User.findOne({_id: req.user._id})).role
-  if(!/^(admin|manager)$/.test(requesterRole)){
+  if(!/^(admin|manager)$/.test(req.user.role)){
     return res.status(401).json('Insufficient Role')
   }
 

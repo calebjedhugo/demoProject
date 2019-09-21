@@ -56,8 +56,9 @@ router.get('/login', async (req, res) => {
   const validPass = await bcrypt.compare(req.query.password, user.password)
   if(!validPass) return res.status(400).json('Password was incorrect.')
 
-  const token = jwt.sign({_id: user._id, role: user.role}, process.env.TOKEN_SECRET, { expiresIn: '1h' })
-  res.json({message: 'Login was successful!', jwt: token})
+  const token = jwt.sign({_id: user._id, role: user.role}, process.env.TOKEN_SECRET, { expiresIn: process.env.jwtExp || '1h' })
+  res.set('Authorization', token)
+  res.json({message: 'Login was successful!'})
 })
 
 module.exports = router;

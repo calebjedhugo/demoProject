@@ -25,12 +25,26 @@ axios.interceptors.response.use(undefined, e => { //Let the user know if the jwt
   if(e.response.data === 'Login Required'){
     setTimeout(() => {
       let logout = document.getElementById('logout')
-      if(logout) logout.click()
+      if(logout){
+        logout.click()
+      } else { //interface is already set to go.
+        storeJwt(''); //clear out local storage
+        axios.defaults.headers.common['Authorization'] = '';
+      }
     }, 3000); //3s to be polite. Wrapped in the if just in case they already clicked it.
     e.response.data = 'Login Required'
   }
   return Promise.reject(e);
 });
+
+axios.interceptors.response.use((data) => {
+  let token = data.headers.authorization //Update the jwt anytime the server sends one.
+  if(token){
+    axios.defaults.headers.common['Authorization'] = token;
+    storeJwt(token);
+  }
+  return Promise.resolve(data)
+})
 
 class App extends Component {
   constructor(props){
@@ -81,28 +95,12 @@ class App extends Component {
         myRole: data._id === myId ? data.role : this.state.myRole,
         ...data
       });
-      if(!jwtNew) {
-        axios({
-          url: `jwt/freshToken`,
-          method: 'GET',
-        }).then(res => {
-          axios.defaults.headers.common['Authorization'] = res.data;
-          storeJwt(res.data);
-        })
-      }
     }).catch(e => {
-      if(e.response){
-        console.log(e.response.data)
-        if(e.response.data === 'Login Required'){ //An error with a response means a login is required.
-          axios.defaults.headers.common['Authorization'] = '';
-          storeJwt('');
-          this.setState({error: ''})
-        }
-      } else if(!e.response){ //No response means the server is down. Try request again.
-          this.setState({error: 'Loading...'})
-          this.alreadyAttempted += 1;
-          setTimeout(() => {this.getUserData(_id)}, 1000)  //Try again in case the server was just having a moment (mostly for the developer environment).
-        }
+      if(!e.response){ //No response means the server is down. Try request again.
+        this.setState({error: 'Loading...'})
+        this.alreadyAttempted += 1;
+        setTimeout(() => {this.getUserData(_id)}, 1000)  //Try again in case the server was just having a moment (mostly for the developer environment).
+      }
     }).finally(() => this.setState({loading: false}))
   }
 

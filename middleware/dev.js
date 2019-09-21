@@ -2,8 +2,11 @@ const router = require('express').Router();
 
 //cors for developement environment.
 const cors = require('cors')
-router.options('*', cors())
-router.use(/.*/, cors())
+var corsInstance = cors({
+  exposedHeaders: 'Authorization'
+})
+router.options('*', corsInstance)
+router.use(/.*/, corsInstance)
 
 //A production environment should already have this.
 require('dotenv').config();

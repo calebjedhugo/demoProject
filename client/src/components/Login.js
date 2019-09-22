@@ -26,7 +26,7 @@ export class Login extends Component {
     if(this.props.updating){
       return this.props.updateUser({ //handled by UserEntry
         name: this.state.name,
-        email: this.state.email,
+        email: this.state.email !== this.props.email ? this.state.email : undefined, //email costs a db call to check for existance.
         role: this.state.role
       }, this.props.closeModal())
     }

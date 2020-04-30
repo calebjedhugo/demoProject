@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "dependencies": "0.0.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-fade-in": "^0.1.6",

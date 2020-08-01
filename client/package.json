@@ -5,11 +5,11 @@
   "dependencies": {
     "axios": "^0.19.0",
     "dependencies": "0.0.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-fade-in": "^0.1.6",
-    "react-scripts": "3.0.1"
+    "react-scripts": "^3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -31,5 +31,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "homepage": "./publichtml"
 }

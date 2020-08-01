@@ -6,7 +6,7 @@
     "installDev": "npm install && cd client npm install",
     "server": "nodemon server.js",
     "dev": "concurrently \"npm run client\" \"npm run server\"",
-    "build": "mkdir publichtml && cd client && npm run build && mv build/* ../publichtml && rmdir build",
+    "build": "mkdir build && cd client && npm i && npm run build && mv build/* ../build && cd ../ && rmdir client",
     "start": "node server.js"
   },
   "dependencies": {
